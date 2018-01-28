@@ -5,30 +5,22 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class TextDefrag {
 
-	public static String main(String[] args) {
-		String reassembledText = "";
+	public static void main(String[] args) {
         try {
         	BufferedReader reader = new BufferedReader(new FileReader(args[0]));
-        	//BufferedReader reader = new BufferedReader(new FileReader("Resources/SampleFile2.txt"));
             String line;
             while ((line = reader.readLine()) != null) {
-            	reassembledText = reassemble(line);
-                System.out.println(reassembledText);
+                System.out.println(reassemble(line));
             }
             reader.close();
         } 
         catch (IOException e) {
             e.printStackTrace();
         }
-		return reassembledText;
     }
 	
 	/**
@@ -58,14 +50,14 @@ public class TextDefrag {
         while (numberOfLoops < maxLoops) {
             for (String fragment : fragments) {
             	
-                // Check if the recombined string overlaps the fragment
+                //Check if the recombined string overlaps the fragment
                 int overlap = overlap(recombinedString, fragment);
                 if (overlap > largestOverlap) {
                 	largestOverlap = overlap;
                     overlappingString = fragment;
                 }
                 
-                // Check if the fragment string overlaps the recombined string
+                //Check if the fragment string overlaps the recombined string
                 overlap = overlap(fragment, recombinedString);
                 if (overlap > largestOverlap) {
                 	largestOverlap = overlap;
@@ -92,7 +84,7 @@ public class TextDefrag {
      */
     private static int overlap(final String str1, final String str2) {
 
-        // Start at the longest possible length and work down
+        //Start at the longest possible length and work down
         int maxOverlap = str2.length();
         while (!str1.regionMatches(str1.length() - maxOverlap, str2, 0, maxOverlap)) {
             maxOverlap--;
@@ -111,16 +103,16 @@ public class TextDefrag {
      */
     private static String combineStrings(String recombinedString, String overlappingStr, int overlap) {
 
-    	// If the end of recombinedString matches the start of overlappingStr, 
-    	// subset overlappingStr and add recombinedString to the start
+    	//If the end of recombinedString matches the start of overlappingStr, 
+    	//subset overlappingStr and add recombinedString to the start
         if (recombinedString.substring((recombinedString.length() - overlap), recombinedString.length())
         		.equals(overlappingStr.substring(0, overlap))) {
         	
         	overlappingStr = overlappingStr.substring(overlap, overlappingStr.length());
             return recombinedString + overlappingStr;
         } 
-        // If the end of overlappingStr matches the start of recombinedString, 
-        // subset recombinedString and add overlappingStr to the start
+        //If the end of overlappingStr matches the start of recombinedString, 
+        //subset recombinedString and add overlappingStr to the start
         else if (overlappingStr.substring((overlappingStr.length() - overlap), overlappingStr.length())
                 .equals(recombinedString.substring(0, overlap))) {
         	
@@ -128,7 +120,7 @@ public class TextDefrag {
             return overlappingStr + recombinedString;
         } 
        	
-         // No overlap occurs
+         //No overlap occurs
          return recombinedString;
     }
 }
