@@ -7,7 +7,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class TextDefrag {
 
@@ -22,7 +24,6 @@ public class TextDefrag {
                 System.out.println(reassembledText);
             }
             reader.close();
-
         } 
         catch (IOException e) {
             e.printStackTrace();
@@ -40,7 +41,7 @@ public class TextDefrag {
 		//Create list of each text fragment
 		List<String> fragments = new ArrayList<>(Arrays.asList(line.split(";")));
 		
-		if (fragments.isEmpty()) {
+		if (fragments.isEmpty() || fragments.size() == 0) {
             return "";
         }
         
@@ -54,7 +55,7 @@ public class TextDefrag {
         int numberOfLoops = 0;
         int maxLoops = fragments.size();
         
-        while (fragments.size() > 0 && numberOfLoops < maxLoops) {
+        while (numberOfLoops < maxLoops) {
             for (String fragment : fragments) {
             	
                 // Check if the recombined string overlaps the fragment
