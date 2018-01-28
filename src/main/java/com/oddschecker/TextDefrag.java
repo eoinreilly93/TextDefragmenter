@@ -30,6 +30,11 @@ public class TextDefrag {
 		return reassembledText;
     }
 	
+	/**
+	 * Reassembles the fragments into their original format
+	 * @param line		- All the fragments separated by ";"
+	 * @return			- Recombined fragments 
+	 */
 	private static String reassemble(String line) {
 		
 		//Create list of each text fragment
@@ -44,62 +49,45 @@ public class TextDefrag {
         fragments.remove(0);
         
         //Loop through rest of the string fragments and check for overlaps.
-        int bestOverlap = 0;
-        String overlapping = "";
+        int largestOverlap = 0;
+        String overlappingString = "";
         int numberOfLoops = 0;
         int maxLoops = fragments.size();
         
         while (fragments.size() > 0 && numberOfLoops < maxLoops) {
             for (String fragment : fragments) {
             	
-            	System.out.println(recombinedString);
-            	System.out.println(fragment);
-
                 // Check if the recombined string overlaps the fragment
                 int overlap = overlap(recombinedString, fragment);
-                if (overlap > bestOverlap) {
-                    bestOverlap = overlap;
-                    overlapping = fragment;
+                if (overlap > largestOverlap) {
+                	largestOverlap = overlap;
+                    overlappingString = fragment;
                 }
                 
                 // Check if the fragment string overlaps the recombined string
                 overlap = overlap(fragment, recombinedString);
-                if (overlap > bestOverlap) {
-                    bestOverlap = overlap;
-                    overlapping = fragment;
-                }
-                
-                //Check whether the fragment is already contained entirely in the recombined string
-                if (recombinedString.contains(fragment)) {
-                    bestOverlap = fragment.length();
-                    overlapping = fragment;
-                } 
-                //Check whether the fragment contains the recombined string
-                else if (fragment.contains(recombinedString)) {
-                    bestOverlap = recombinedString.length();
-                    recombinedString = fragment;
-                    overlapping = fragment;
+                if (overlap > largestOverlap) {
+                	largestOverlap = overlap;
+                    overlappingString = fragment;
                 }
             }
             
-            recombinedString = recombine(recombinedString, overlapping, bestOverlap);
-            fragments.remove(overlapping);
-            bestOverlap = 0;
-            overlapping = "";
+            recombinedString = combineStrings(recombinedString, overlappingString, largestOverlap);
+            fragments.remove(overlappingString);
+            largestOverlap = 0;
+            overlappingString = "";
             numberOfLoops++;
-        }
+        }       
         
-        
-		return recombinedString;
-		
+		return recombinedString;		
 	}
 	
 	/**
      * Calculates the max length of overlapping regions between two strings
      *
-     * @param str1 - String to be compared
-     * @param str2 - String to be compared
-     * @return maxOverlap - length of maximum overlap
+     * @param str1 			- String to be compared
+     * @param str2			- String to be compared
+     * @return maxOverlap 	- length of maximum overlap between the two strings
      */
     private static int overlap(final String str1, final String str2) {
 
@@ -111,26 +99,35 @@ public class TextDefrag {
         return maxOverlap;
     }
     
-    private static String recombine(String str1, String str2, int overlap) {
+    /**
+     * Combines the current fragment with the recombined string
+     * If not possible, it returns the curent recombined string
+     * 
+     * @param recombinedString		- Current recombined string
+     * @param overlappingStr		- The current fragment 
+     * @param overlap				- The largest overlap between the two strings
+     * @return						- Newly combined string
+     */
+    private static String combineStrings(String recombinedString, String overlappingStr, int overlap) {
 
-    	//If the end of str1 matches the start of st2, subset str2 and add str1 to the start
-        if (str1.substring((str1.length() - overlap), str1.length())
-        		.equals(str2.substring(0, overlap))) {
-            // end of 1 matches start of 2
-            str2 = str2.substring(overlap, str2.length());
-            return str1 + str2;
-        } 
-        //If the end of str2 matches the start of str1, subset str1 and add str2 to the start
-        else if (str2.substring((str2.length() - overlap), str2.length())
-                .equals(str1.substring(0, overlap))) {
-            str1 = str1.substring(overlap, str1.length());
-
-            return str2 + str1;
-        } 
-        else {
+    	// If the end of recombinedString matches the start of overlappingStr, 
+    	// subset overlappingStr and add recombinedString to the start
+        if (recombinedString.substring((recombinedString.length() - overlap), recombinedString.length())
+        		.equals(overlappingStr.substring(0, overlap))) {
         	
-            // There appears to be no overlap
-            return str1;
-        }
+        	overlappingStr = overlappingStr.substring(overlap, overlappingStr.length());
+            return recombinedString + overlappingStr;
+        } 
+        // If the end of overlappingStr matches the start of recombinedString, 
+        // subset recombinedString and add overlappingStr to the start
+        else if (overlappingStr.substring((overlappingStr.length() - overlap), overlappingStr.length())
+                .equals(recombinedString.substring(0, overlap))) {
+        	
+        	recombinedString = recombinedString.substring(overlap, recombinedString.length());
+            return overlappingStr + recombinedString;
+        } 
+       	
+         // No overlap occurs
+         return recombinedString;
     }
 }
