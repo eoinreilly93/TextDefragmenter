@@ -9,18 +9,21 @@ import java.util.List;
 
 public class TextDefrag {
 
-	public static void main(String[] args) {
+	public static String main(String[] args) {
+		
+        String result = "";
         try {
         	BufferedReader reader = new BufferedReader(new FileReader(args[0]));
             String line;
             while ((line = reader.readLine()) != null) {
-                System.out.println(reassemble(line));
+                result = reassemble(line);
             }
             reader.close();
         } 
         catch (IOException e) {
             e.printStackTrace();
         }
+        return result;
     }
 	
 	/**
